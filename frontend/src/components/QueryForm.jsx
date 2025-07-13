@@ -3,8 +3,6 @@ import axios from "axios";
 
 export default function QueryForm({ setResult }) {
   const [question, setQuestion] = useState("");
-  const [cloudLink, setCloudLink] = useState("");
-  const [remarks, setRemarks] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,36 +19,27 @@ export default function QueryForm({ setResult }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white shadow-xl rounded-2xl max-w-2xl mx-auto mt-10">
-      <h1 className="text-xl font-bold text-gray-800">Natural Language Query</h1>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 p-8 bg-gradient-to-r from-sky-100 via-white to-indigo-100 shadow-2xl rounded-3xl max-w-xl mx-auto mt-20 border border-indigo-300"
+    >
+      <h1 className="text-2xl font-extrabold text-indigo-800 text-center">
+        💬 Ask Your Data
+      </h1>
+
       <input
         type="text"
-        placeholder="Enter your question..."
+        placeholder="Type your natural language query..."
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded"
+        className="w-full p-3 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-800 text-md placeholder-gray-500"
       />
-
-      <input
-        type="text"
-        placeholder="Prototype Cloud Link (Optional)"
-        value={cloudLink}
-        onChange={(e) => setCloudLink(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded"
-      />
-
-      <textarea
-        placeholder="Remarks or extra notes (Optional)"
-        value={remarks}
-        onChange={(e) => setRemarks(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded"
-      ></textarea>
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="w-full bg-indigo-600 text-white font-semibold px-4 py-3 rounded-lg hover:bg-indigo-700 transition-all duration-200 shadow-md"
       >
-        Submit
+        🚀 Submit Query
       </button>
     </form>
   );
