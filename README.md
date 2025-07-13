@@ -1,4 +1,3 @@
-````markdown
 # 💡 Valuefy RAG Agent
 
 A Natural Language Cross-Platform Data Query Agent that lets users query both MongoDB and MySQL using simple English. Built using LangChain, ReactJS, FastAPI, and OpenAI.
