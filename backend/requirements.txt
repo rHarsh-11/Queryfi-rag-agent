@@ -8,3 +8,4 @@ openai
 pydantic
 pandas
 json5
+python-dotenv
