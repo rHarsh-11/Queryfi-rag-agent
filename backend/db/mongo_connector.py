@@ -1,25 +1,34 @@
-from pymongo import MongoClient
-from bson import ObjectId
+import os
 import re
 import logging
+from pymongo import MongoClient
+from bson import ObjectId
 import json5
+from dotenv import load_dotenv
 
-# Connect to MongoDB Atlas
-client = MongoClient("mongodb+srv://harsh:strongpassword@valuefy.t8m9ka9.mongodb.net/?retryWrites=true&w=majority&appName=valuefy")
-db = client["valuefy"]
-collection = db["clients"]
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "valuefy")
+MONGO_COLLECTION_NAME = os.getenv("MONGO_COLLECTION_NAME", "clients")
+
+if not MONGO_URI:
+    raise ValueError("MONGO_URI is not set in environment variables.")
+
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client[MONGO_DB_NAME]
+collection = db[MONGO_COLLECTION_NAME]
 
 def serialize_mongo_result(docs):
-    serialized = []
-    for doc in docs:
-        doc["_id"] = str(doc["_id"])
-        serialized.append(doc)
-    return serialized
+    return [{**doc, "_id": str(doc["_id"])} for doc in docs]
 
 def fetch_from_mongo(query: str):
-    import logging
-    logging.basicConfig(level=logging.INFO)
-
+    """
+    Execute a MongoDB find query passed as a string (e.g., 'db.clients.find({"active": true})')
+    """
     pattern = r"\.find\(\s*({(?:[^{}]|{[^{}]*})*})\s*(?:,\s*({(?:[^{}]|{[^{}]*})*}))?\s*\)"
     match = re.search(pattern, query, re.DOTALL)
 
@@ -48,10 +57,14 @@ def fetch_from_mongo(query: str):
 
     logging.info(f"Running MongoDB find with filter: {filter_query} and projection: {projection}")
 
-    if projection:
-        cursor = collection.find(filter_query, projection)
-    else:
-        cursor = collection.find(filter_query)
+    try:
+        if projection:
+            cursor = collection.find(filter_query, projection)
+        else:
+            cursor = collection.find(filter_query)
+        results = list(cursor)
+        return serialize_mongo_result(results)
+    except Exception as e:
+        logging.error(f"Error executing query: {e}")
+        return []
 
-    results = list(cursor)
-    return serialize_mongo_result(results)
